@@ -1,0 +1,29 @@
+QT       += core gui
+
+TARGET = Updater
+TEMPLATE = app
+
+SOURCES += main.cpp\
+        mainwindow.cpp
+
+HEADERS  += mainwindow.h
+
+CONFIG(debug, debug|release) {
+  BUILD_DIR = debug
+} else {
+  BUILD_DIR = release
+#  DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
+DESTDIR = $${BUILD_DIR}/target/
+OBJECTS_DIR = $${BUILD_DIR}/obj/
+MOC_DIR = $${BUILD_DIR}/moc/
+RCC_DIR = $${BUILD_DIR}/rcc/
+
+include(3rdparty/qtsingleapplication/qtsingleapplication.pri)
+
+CODECFORTR  = UTF-8
+CODECFORSRC = UTF-8
+
+RESOURCES += \
+    updater.qrc
