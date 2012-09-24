@@ -134,7 +134,7 @@ void MainWindow::startLoadFile()
   if (filesList_.count() > 1) {
     QString fileStr(filesList_.takeFirst());
     QString urlStr = "http://file.quite-rss.googlecode.com/hg/windows/" + fileStr + ".7z";
-    qCritical() << urlStr << filesListS_.count() << filesList_.count();
+
     reply_ = manager_.get(QNetworkRequest(QUrl(urlStr)));
     connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFiles()));
     statusLabel_->setText(tr("Downloading files (%1)...").
@@ -174,7 +174,6 @@ void MainWindow::finishLoadFiles()
       file.write(reply_->readAll());
       file.close();
       filesListT_ << file.fileName();
-      qCritical() << file.fileName();
     }
 
     startLoadFile();
@@ -234,7 +233,7 @@ void MainWindow::finishUpdate(QString str)
   closeButton_->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   closeButton_->setDefault(true);
   closeButton_->setFocus(Qt::OtherFocusReason);
-  connect(closeButton_, SIGNAL(clicked()), SLOT(close()));
+  connect(closeButton_, SIGNAL(clicked()), SLOT(cancelUpgrade()));
 
   buttonLayout_->addStretch(1);
   buttonLayout_->addWidget(closeButton_);
@@ -283,5 +282,48 @@ void MainWindow::cancelUpgrade()
 //! Переименовать и распаковать файлы в папку с программой
 void MainWindow::extractFiles()
 {
-  // >>>>>>>>>>>>>>>>>>>
+  sevenzaProcess_ = new QProcess(this);
+  connect(sevenzaProcess_, SIGNAL(finished(int,QProcess::ExitStatus)),
+          this, SLOT(finishExtract(int,QProcess::ExitStatus)));
+  connect(sevenzaProcess_, SIGNAL(error(QProcess::ProcessError)),
+          this, SLOT(errorExtract(QProcess::ProcessError)));
+  finishExtract(0, QProcess::NormalExit);
+}
+
+void MainWindow::finishExtract(int t, QProcess::ExitStatus exitStatus)
+{
+  if (exitStatus == QProcess::CrashExit) {
+    finishUpdate(tr("Error extracting files"));
+    return;
+  }
+  if (filesListS_.count() > 1) {
+    QString file = filesListS_.takeFirst();
+
+    QString program = "7za.exe";
+    QStringList arguments;
+    QString path = QCoreApplication::applicationDirPath();
+
+    if (file.lastIndexOf("/") > 0)
+      path.append(QString("/%1").arg(file.left(file.lastIndexOf("/"))));
+    arguments << "x" << "-r" << "-aoa"
+              << filesListT_.at(filesListT_.count() - filesListS_.count())
+              << QString("-o%1").arg(path);
+    sevenzaProcess_->start(program, arguments);
+  } else {
+    statusLabel_->setText(tr("Update completed!"));
+    progressBar_->hide();
+
+    QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
+    (quintptr)ShellExecute(
+          0, 0,
+          (wchar_t *)quiterssFile.utf16(),
+          (wchar_t *)QString("--show").utf16(),
+          0, SW_SHOWNORMAL);
+    cancelUpgrade();
+  }
+}
+
+void MainWindow::errorExtract(QProcess::ProcessError)
+{
+  finishUpdate(tr("Error extracting files"));
 }

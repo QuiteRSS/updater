@@ -3,16 +3,19 @@ QT       += core gui
 TARGET = Updater
 TEMPLATE = app
 
-SOURCES += main.cpp\
-        mainwindow.cpp
+SOURCES += \
+    src/mainwindow.cpp \
+    src/main.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += \
+    src/version.h \
+    src/mainwindow.h
 
 CONFIG(debug, debug|release) {
   BUILD_DIR = debug
 } else {
   BUILD_DIR = release
-#  DEFINES += QT_NO_DEBUG_OUTPUT
+  DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
 DESTDIR = $${BUILD_DIR}/target/
@@ -27,3 +30,8 @@ CODECFORSRC = UTF-8
 
 RESOURCES += \
     updater.qrc
+
+RC_FILE = updaterapp.rc
+
+LIBS += libkernel32 \
+        libpsapi

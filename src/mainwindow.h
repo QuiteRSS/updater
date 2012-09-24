@@ -39,6 +39,8 @@ private:
   QNetworkAccessManager manager_;
   QNetworkReply *reply_;
 
+  QProcess *sevenzaProcess_;
+
 private slots:
   void launchRequest();
   void isRuningApp();
@@ -49,6 +51,8 @@ private slots:
   void continueUpgrade();
   void cancelUpgrade();
   void extractFiles();
+  void finishExtract(int exitCode, QProcess::ExitStatus exitStatus);
+  void errorExtract(QProcess::ProcessError);
 
 signals:
   void signalMoveWindows();
