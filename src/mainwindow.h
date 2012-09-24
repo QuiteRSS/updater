@@ -4,6 +4,9 @@
 #include <QtGui>
 #include <QNetworkProxy>
 #include <QNetworkReply>
+#include <windows.h>
+#include <w32api.h>
+#include <tlhelp32.h>
 
 class MainWindow : public QWidget
 {
@@ -19,6 +22,8 @@ public slots:
 private:
   void findFiles(const QDir& dir);
   void finishUpdate(QString str);
+  int cntProcessRun();
+  QString copyToQString(WCHAR array[MAX_PATH]);
 
   QLabel *statusLabel_;
   QProgressBar *progressBar_;
@@ -30,6 +35,7 @@ private:
   QPushButton *cancelButton_;
 
   QTimer *isRuningAppTimer_;
+  int cntProcess_;
   QStringList filesList_;
   QStringList md5List_;
   QStringList filesListT_;

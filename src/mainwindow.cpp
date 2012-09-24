@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include <windows.h>
 
 /*! \brief Обработка сообщений полученных из запущщеной копии программы *******/
 void MainWindow::receiveMessage(const QString& message)
@@ -185,11 +184,46 @@ void MainWindow::finishLoadFiles()
 //! Проверка запущено ли обновляемое приложение
 void MainWindow::isRuningApp()
 {
-  HWND hWindow = FindWindow(0, (wchar_t *)QString("QuiteRSS").utf16());
-  if (!hWindow) {
+  int cntProcess = cntProcessRun();
+  if ((cntProcess_ != cntProcess) || !cntProcess) {
     isRuningAppTimer_->stop();
     extractFiles();
   }
+}
+
+int MainWindow::cntProcessRun()
+{
+  int cntProcess = 0;
+  HANDLE hSnap = NULL;
+  PROCESSENTRY32 pe32 = {sizeof(pe32)};
+
+  hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  if (hSnap!=NULL) {
+    if (Process32First(hSnap, &pe32)) {
+      QString filename = copyToQString(pe32.szExeFile);
+      if (filename == "QuiteRSS.exe")
+        cntProcess++;
+      while (Process32Next(hSnap, &pe32)) {
+        filename = copyToQString(pe32.szExeFile);
+        if (filename == "QuiteRSS.exe")
+          cntProcess++;
+      }
+    }
+  }
+  CloseHandle(hSnap);
+  return cntProcess;
+}
+
+QString MainWindow::copyToQString(WCHAR array[MAX_PATH])
+{
+  QString string;
+  int i = 0;
+
+  while (array[i] != 0) {
+    string[i] = array[i];
+    i++;
+  }
+  return string;
 }
 
 //! Поиск всех файлов в папке с программой для заполнения списка
@@ -258,8 +292,9 @@ void MainWindow::continueUpgrade()
   resize(230, 20);
   emit signalMoveWindows();
 
-  HWND hWindow = FindWindow(0, (wchar_t *)QString("QuiteRSS").utf16());
-  if (hWindow) {
+  cntProcess_ = cntProcessRun();
+
+  if (cntProcess_) {
     QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
     (quintptr)ShellExecute(
           0, 0,

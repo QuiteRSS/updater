@@ -32,6 +32,3 @@ RESOURCES += \
     updater.qrc
 
 RC_FILE = updaterapp.rc
-
-LIBS += libkernel32 \
-        libpsapi
