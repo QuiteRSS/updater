@@ -65,9 +65,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QNetworkProxy::setApplicationProxy(networkProxy);
   }
 
-  isRuningAppTimer_ = new QTimer(this);
-  connect(isRuningAppTimer_, SIGNAL(timeout()),
-          this, SLOT(isRuningApp()));
+  isProcessRunTimer_ = new QTimer(this);
+  connect(isProcessRunTimer_, SIGNAL(timeout()),
+          this, SLOT(isProcessRun()));
 
   connect(this, SIGNAL(signalMoveWindows()), SLOT(slotMoveWindows()),
           Qt::QueuedConnection);
@@ -139,7 +139,7 @@ void MainWindow::startLoadFile()
     statusLabel_->setText(tr("Downloading files (%1)...").
                           arg(filesListS_.count() - filesList_.count()));
   } else {
-    statusLabel_->setText(tr("Attention! QuiteRSS will close! \nContinue to upgrade?"));
+    statusLabel_->setText(tr("Attention! QuiteRSS will close! \nContinue updating?"));
     progressBar_->hide();
 
     applyButtonLayout_ = new QHBoxLayout();
@@ -182,36 +182,51 @@ void MainWindow::finishLoadFiles()
 }
 
 //! Проверка запущено ли обновляемое приложение
-void MainWindow::isRuningApp()
+void MainWindow::isProcessRun()
 {
-  int cntProcess = cntProcessRun();
-  if ((cntProcess_ != cntProcess) || !cntProcess) {
-    isRuningAppTimer_->stop();
-    extractFiles();
-  }
-}
+  isProcessRunTimer_->stop();
 
-int MainWindow::cntProcessRun()
-{
-  int cntProcess = 0;
   HANDLE hSnap = NULL;
   PROCESSENTRY32 pe32 = {sizeof(pe32)};
+  QList <int> ids;
 
   hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (hSnap!=NULL) {
     if (Process32First(hSnap, &pe32)) {
       QString filename = copyToQString(pe32.szExeFile);
       if (filename == "QuiteRSS.exe")
-        cntProcess++;
+        ids.append(pe32.th32ProcessID);
       while (Process32Next(hSnap, &pe32)) {
         filename = copyToQString(pe32.szExeFile);
         if (filename == "QuiteRSS.exe")
-          cntProcess++;
+          ids.append(pe32.th32ProcessID);
       }
     }
   }
   CloseHandle(hSnap);
-  return cntProcess;
+
+  MODULEENTRY32 mpe32 = {sizeof(mpe32)};
+  foreach (int id, ids) {
+    hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, id);
+    if (hSnap!=NULL) {
+      if (Module32First(hSnap, &mpe32)) {
+        QFileInfo file(copyToQString(mpe32.szExePath));
+        if (file.path() == QCoreApplication::applicationDirPath()) {
+          QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
+          (quintptr)ShellExecute(
+                0, 0,
+                (wchar_t *)quiterssFile.utf16(),
+                (wchar_t *)QString("--exit").utf16(),
+                0, SW_SHOWNORMAL);
+          isProcessRunTimer_->start(500);
+          CloseHandle(hSnap);
+          return;
+        }
+      }
+    }
+    CloseHandle(hSnap);
+  }
+  extractFiles();
 }
 
 QString MainWindow::copyToQString(WCHAR array[MAX_PATH])
@@ -241,10 +256,9 @@ void MainWindow::findFiles(const QDir& dir)
       str = QCryptographicHash::hash(file_.readAll(), QCryptographicHash::Md5).toHex();
       file_.close();
     }
-
     filesList_ << dir.absoluteFilePath(file).remove(QCoreApplication::applicationDirPath()+"/");
     md5List_ << str;
- }
+  }
 
   QStringList listDir = dir.entryList(QDir::Dirs);
   foreach (QString subdir, listDir) {
@@ -292,18 +306,7 @@ void MainWindow::continueUpgrade()
   resize(230, 20);
   emit signalMoveWindows();
 
-  cntProcess_ = cntProcessRun();
-
-  if (cntProcess_) {
-    QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
-    (quintptr)ShellExecute(
-          0, 0,
-          (wchar_t *)quiterssFile.utf16(),
-          (wchar_t *)QString("--exit").utf16(),
-          0, SW_SHOWNORMAL);
-  }
-
-  isRuningAppTimer_->start(500);
+  isProcessRun();
 }
 
 void MainWindow::cancelUpgrade()

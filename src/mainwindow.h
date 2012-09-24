@@ -22,7 +22,6 @@ public slots:
 private:
   void findFiles(const QDir& dir);
   void finishUpdate(QString str);
-  int cntProcessRun();
   QString copyToQString(WCHAR array[MAX_PATH]);
 
   QLabel *statusLabel_;
@@ -34,8 +33,7 @@ private:
   QPushButton *applyButton_;
   QPushButton *cancelButton_;
 
-  QTimer *isRuningAppTimer_;
-  int cntProcess_;
+  QTimer *isProcessRunTimer_;
   QStringList filesList_;
   QStringList md5List_;
   QStringList filesListT_;
@@ -49,7 +47,7 @@ private:
 
 private slots:
   void launchRequest();
-  void isRuningApp();
+  void isProcessRun();
   void finishLoadFilesList();
   void finishLoadFiles();
   void startLoadFile();
