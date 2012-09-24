@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   setWindowTitle("QuiteRSS Updater");
   setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint |
-                 Qt::WindowStaysOnTopHint | /*Qt::MSWindowsFixedSizeDialogHint |*/
+                 Qt::WindowStaysOnTopHint | Qt::MSWindowsFixedSizeDialogHint |
                  Qt::WindowMinimizeButtonHint);
 
   statusLabel_ = new QLabel(tr("Checking for updates..."), this);
@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   setLayout(mainLayout_);
 
-  resize(200, 20);
+  resize(230, 20);
 
   QSettings *settings = new QSettings(
         QCoreApplication::applicationDirPath() + "/QuiteRSS.ini",
@@ -250,12 +250,12 @@ void MainWindow::slotMoveWindows()
 
 void MainWindow::continueUpgrade()
 {
-  statusLabel_->setText(tr("Extract files..."));
+  statusLabel_->setText(tr("Closing QuiteRSS..."));
   applyButtonLayout_->setMargin(0);
   applyButton_->hide();
   cancelButton_->hide();
   progressBar_->show();
-  resize(200, 20);
+  resize(230, 20);
   emit signalMoveWindows();
 
   HWND hWindow = FindWindow(0, (wchar_t *)QString("QuiteRSS").utf16());
@@ -282,6 +282,7 @@ void MainWindow::cancelUpgrade()
 //! Переименовать и распаковать файлы в папку с программой
 void MainWindow::extractFiles()
 {
+  statusLabel_->setText(tr("Extract files..."));
   sevenzaProcess_ = new QProcess(this);
   connect(sevenzaProcess_, SIGNAL(finished(int,QProcess::ExitStatus)),
           this, SLOT(finishExtract(int,QProcess::ExitStatus)));
