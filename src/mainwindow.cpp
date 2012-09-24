@@ -123,7 +123,7 @@ void MainWindow::finishLoadFilesList()
       finishUpdate(tr("No new version available!"));
     }
   } else {
-    finishUpdate(tr("Error checking updates"));
+    finishUpdate(tr("Error checking updates!"));
   }
 }
 
@@ -177,7 +177,7 @@ void MainWindow::finishLoadFiles()
 
     startLoadFile();
   } else {
-    finishUpdate(tr("Error checking updates"));
+    finishUpdate(tr("Error checking updates!"));
   }
 }
 
@@ -185,6 +185,9 @@ void MainWindow::finishLoadFiles()
 void MainWindow::isProcessRun()
 {
   isProcessRunTimer_->stop();
+
+  static bool exitOn = false;
+  static int cnt = 0;
 
   HANDLE hSnap = NULL;
   PROCESSENTRY32 pe32 = {sizeof(pe32)};
@@ -212,14 +215,20 @@ void MainWindow::isProcessRun()
       if (Module32First(hSnap, &mpe32)) {
         QFileInfo file(copyToQString(mpe32.szExePath));
         if (file.path() == QCoreApplication::applicationDirPath()) {
-          QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
-          (quintptr)ShellExecute(
-                0, 0,
-                (wchar_t *)quiterssFile.utf16(),
-                (wchar_t *)QString("--exit").utf16(),
-                0, SW_SHOWNORMAL);
-          isProcessRunTimer_->start(500);
+          if (!exitOn) {
+            exitOn = true;
+            QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
+            (quintptr)ShellExecute(
+                  0, 0,
+                  (wchar_t *)quiterssFile.utf16(),
+                  (wchar_t *)QString("--exit").utf16(),
+                  0, SW_SHOWNORMAL);
+          }
           CloseHandle(hSnap);
+          if (cnt++ < 240)
+            isProcessRunTimer_->start(500);
+          else
+            finishUpdate(tr("Error updating!"));
           return;
         }
       }
@@ -320,7 +329,6 @@ void MainWindow::cancelUpgrade()
 //! Переименовать и распаковать файлы в папку с программой
 void MainWindow::extractFiles()
 {
-  statusLabel_->setText(tr("Extract files..."));
   sevenzaProcess_ = new QProcess(this);
   connect(sevenzaProcess_, SIGNAL(finished(int,QProcess::ExitStatus)),
           this, SLOT(finishExtract(int,QProcess::ExitStatus)));
@@ -332,11 +340,13 @@ void MainWindow::extractFiles()
 void MainWindow::finishExtract(int t, QProcess::ExitStatus exitStatus)
 {
   if (exitStatus == QProcess::CrashExit) {
-    finishUpdate(tr("Error extracting files"));
+    finishUpdate(tr("Error extracting files!"));
     return;
   }
   if (filesListS_.count() > 1) {
     QString file = filesListS_.takeFirst();
+    statusLabel_->setText(tr("Extract files (%1)...").
+                          arg(filesListT_.count() - filesListS_.count() + 1));
 
     QString program = "7za.exe";
     QStringList arguments;
@@ -364,5 +374,5 @@ void MainWindow::finishExtract(int t, QProcess::ExitStatus exitStatus)
 
 void MainWindow::errorExtract(QProcess::ProcessError)
 {
-  finishUpdate(tr("Error extracting files"));
+  finishUpdate(tr("Error extracting files!"));
 }
