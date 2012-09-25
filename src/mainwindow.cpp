@@ -19,8 +19,9 @@ void MainWindow::receiveMessage(const QString& message)
   }
 }
 
-MainWindow::MainWindow(QWidget *parent) :
-  QWidget(parent)
+MainWindow::MainWindow(QString appDirPath, QWidget *parent) :
+  QWidget(parent),
+  appDirPath_(appDirPath)
 {
   setWindowTitle("QuiteRSS Updater");
   setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint |
@@ -47,9 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   resize(230, 20);
 
-  QSettings *settings = new QSettings(
-        QCoreApplication::applicationDirPath() + "/QuiteRSS.ini",
-        QSettings::IniFormat);
+  QSettings *settings = new QSettings(appDirPath_ + "/QuiteRSS.ini", QSettings::IniFormat);
 
   QNetworkProxy networkProxy;
   networkProxy.setType(static_cast<QNetworkProxy::ProxyType>(
@@ -83,7 +82,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::launchRequest()
 {
-  findFiles(QDir(QCoreApplication::applicationDirPath()));
+  findFiles(QDir(appDirPath_));
 
   reply_ = manager_.get(QNetworkRequest(QUrl("http://file.quite-rss.googlecode.com/hg/file_list.md5")));
   connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFilesList()));
@@ -214,10 +213,10 @@ void MainWindow::isProcessRun()
     if (hSnap!=NULL) {
       if (Module32First(hSnap, &mpe32)) {
         QFileInfo file(copyToQString(mpe32.szExePath));
-        if (file.path() == QCoreApplication::applicationDirPath()) {
+        if (file.path() == appDirPath_) {
           if (!exitOn) {
             exitOn = true;
-            QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
+            QString quiterssFile = appDirPath_ + "/QuiteRSS.exe";
             (quintptr)ShellExecute(
                   0, 0,
                   (wchar_t *)quiterssFile.utf16(),
@@ -265,7 +264,7 @@ void MainWindow::findFiles(const QDir& dir)
       str = QCryptographicHash::hash(file_.readAll(), QCryptographicHash::Md5).toHex();
       file_.close();
     }
-    filesList_ << dir.absoluteFilePath(file).remove(QCoreApplication::applicationDirPath()+"/");
+    filesList_ << dir.absoluteFilePath(file).remove(appDirPath_+"/");
     md5List_ << str;
   }
 
@@ -350,7 +349,7 @@ void MainWindow::finishExtract(int t, QProcess::ExitStatus exitStatus)
 
     QString program = "7za.exe";
     QStringList arguments;
-    QString path = QCoreApplication::applicationDirPath();
+    QString path = appDirPath_;
 
     if (file.lastIndexOf("/") > 0)
       path.append(QString("/%1").arg(file.left(file.lastIndexOf("/"))));
@@ -362,7 +361,7 @@ void MainWindow::finishExtract(int t, QProcess::ExitStatus exitStatus)
     statusLabel_->setText(tr("Update completed!"));
     progressBar_->hide();
 
-    QString quiterssFile = QCoreApplication::applicationDirPath() + "/QuiteRSS.exe";
+    QString quiterssFile = appDirPath_ + "/QuiteRSS.exe";
     (quintptr)ShellExecute(
           0, 0,
           (wchar_t *)quiterssFile.utf16(),

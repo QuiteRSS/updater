@@ -13,7 +13,7 @@ class MainWindow : public QWidget
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
+  explicit MainWindow(QString appDirPath, QWidget *parent = 0);
   ~MainWindow();
 
 public slots:
@@ -23,6 +23,8 @@ private:
   void findFiles(const QDir& dir);
   void finishUpdate(QString str);
   QString copyToQString(WCHAR array[MAX_PATH]);
+
+  QString appDirPath_;
 
   QLabel *statusLabel_;
   QProgressBar *progressBar_;
