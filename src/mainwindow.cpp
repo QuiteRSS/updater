@@ -113,6 +113,7 @@ void MainWindow::finishLoadFilesList()
       }
     }
     filesList_ = filesListS_;
+    cntFiles_ = filesList_.count() - 1;
 
     disconnect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFilesList()));
 
@@ -135,8 +136,9 @@ void MainWindow::startLoadFile()
 
     reply_ = manager_.get(QNetworkRequest(QUrl(urlStr)));
     connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFiles()));
-    statusLabel_->setText(tr("Downloading files (%1)...").
-                          arg(filesListS_.count() - filesList_.count()));
+    statusLabel_->setText(tr("Downloading files (%1/%2)...").
+                          arg(filesListS_.count() - filesList_.count()).
+                          arg(cntFiles_));
   } else {
     statusLabel_->setText(tr("Attention! QuiteRSS will close! \nContinue updating?"));
     progressBar_->hide();
@@ -344,8 +346,9 @@ void MainWindow::finishExtract(int t, QProcess::ExitStatus exitStatus)
   }
   if (filesListS_.count() > 1) {
     QString file = filesListS_.takeFirst();
-    statusLabel_->setText(tr("Extract files (%1)...").
-                          arg(filesListT_.count() - filesListS_.count() + 1));
+    statusLabel_->setText(tr("Extract files (%1/%2)...").
+                          arg(filesListT_.count() - filesListS_.count() + 1).
+                          arg(cntFiles_));
 
     QString program = "7za.exe";
     QStringList arguments;

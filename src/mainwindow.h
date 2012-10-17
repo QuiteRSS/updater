@@ -41,6 +41,7 @@ private:
   QStringList filesListT_;
   QStringList filesListS_;
   QStringList md5ListS_;
+  int cntFiles_;
 
   QNetworkAccessManager manager_;
   QNetworkReply *reply_;

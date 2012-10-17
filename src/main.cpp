@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
                     QDir::tempPath() + "/QuiteRSSUpdater/" + file);
       }
       QString quiterssFile = QDir::tempPath() + "/QuiteRSSUpdater/" + "/Updater.exe";
+      appDirPath = "\"" + appDirPath + "\"";
       (quintptr)ShellExecute(
             0, 0,
             (wchar_t *)quiterssFile.utf16(),
