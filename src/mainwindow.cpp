@@ -48,15 +48,34 @@ MainWindow::MainWindow(QString appDirPath, QWidget *parent) :
 
   resize(230, 20);
 
-  QSettings *settings = new QSettings(appDirPath_ + "/QuiteRSS.ini", QSettings::IniFormat);
+  bool portable = true;
+  QSettings *settings_;
+  QString dataDirPath_ = appDirPath_;
+
+  QString fileName;
+  fileName = dataDirPath_ + QDir::separator() + "portable.dat";
+  if (!QFile::exists(fileName)) {
+    fileName = dataDirPath_ + QDir::separator() + QCoreApplication::applicationName() + ".ini";
+    if (!QFile::exists(fileName))
+      portable = false;
+  }
+
+  if (portable) {
+    settings_ = new QSettings(
+          dataDirPath_ + QDir::separator() + QCoreApplication::applicationName() + ".ini",
+          QSettings::IniFormat);
+  } else {
+    settings_ = new QSettings(QSettings::IniFormat, QSettings::UserScope,
+                              QCoreApplication::organizationName(), QCoreApplication::applicationName());
+  }
 
   QNetworkProxy networkProxy;
   networkProxy.setType(static_cast<QNetworkProxy::ProxyType>(
-                         settings->value("networkProxy/type", QNetworkProxy::DefaultProxy).toInt()));
-  networkProxy.setHostName(settings->value("networkProxy/hostName", "").toString());
-  networkProxy.setPort(    settings->value("networkProxy/port",     "").toUInt());
-  networkProxy.setUser(    settings->value("networkProxy/user",     "").toString());
-  networkProxy.setPassword(settings->value("networkProxy/password", "").toString());
+                         settings_->value("networkProxy/type", QNetworkProxy::DefaultProxy).toInt()));
+  networkProxy.setHostName(settings_->value("networkProxy/hostName", "").toString());
+  networkProxy.setPort(    settings_->value("networkProxy/port",     "").toUInt());
+  networkProxy.setUser(    settings_->value("networkProxy/user",     "").toString());
+  networkProxy.setPassword(settings_->value("networkProxy/password", "").toString());
 
   if (QNetworkProxy::DefaultProxy == networkProxy.type())
     QNetworkProxyFactory::setUseSystemConfiguration(true);
@@ -338,7 +357,7 @@ void MainWindow::extractFiles()
   finishExtract(0, QProcess::NormalExit);
 }
 
-void MainWindow::finishExtract(int t, QProcess::ExitStatus exitStatus)
+void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
 {
   if (exitStatus == QProcess::CrashExit) {
     finishUpdate(tr("Error extracting files!"));
