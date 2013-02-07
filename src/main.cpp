@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     return 0;
   } else {
     QString appDirPath = QCoreApplication::applicationDirPath();
-    if (appDirPath != QString(QDir::tempPath() + "/QuiteRSSUpdater")) {
+    if (!appDirPath.contains("QuiteRSSUpdater")) {
       QStringList fileDll;
       fileDll << "libgcc_s_dw2-1.dll" << "mingwm10.dll"<< "QtCore4.dll"
               << "QtGui4.dll" << "QtNetwork4.dll" << "Updater.exe";
