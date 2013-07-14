@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
         QFile::copy(appDirPath + "/" + file,
                     QDir::tempPath() + "/QuiteRSSUpdater/" + file);
       }
-      QString quiterssFile = QDir::tempPath() + "/QuiteRSSUpdater/" + "/Updater.exe";
+      QString quiterssFile = QDir::tempPath() + "/QuiteRSSUpdater/Updater.exe";
       appDirPath = "\"" + appDirPath + "\"";
       (quintptr)ShellExecute(
             0, 0,
@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
   app.setApplicationName("QuiteRss Updater");
   app.setOrganizationName("QuiteRss");
   app.setWindowIcon(QIcon(":/images/images/update.png"));
-//  app.setQuitOnLastWindowClosed(false);
 
   MainWindow window(message);
 

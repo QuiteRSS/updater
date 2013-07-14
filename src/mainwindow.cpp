@@ -55,9 +55,7 @@ MainWindow::MainWindow(QString appDirPath, QWidget *parent) :
   QString fileName;
   fileName = dataDirPath_ + QDir::separator() + "portable.dat";
   if (!QFile::exists(fileName)) {
-    fileName = dataDirPath_ + QDir::separator() + QCoreApplication::applicationName() + ".ini";
-    if (!QFile::exists(fileName))
-      portable = false;
+    portable = false;
   }
 
   if (portable) {
