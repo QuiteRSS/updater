@@ -67,22 +67,24 @@ MainWindow::MainWindow(QString appDirPath, QWidget *parent) :
 
   bool portable = true;
   QSettings *settings_;
-  QString dataDirPath_ = appDirPath_;
 
   QString fileName;
-  fileName = dataDirPath_ + QDir::separator() + "portable.dat";
+  fileName = appDirPath_ + QDir::separator() + "portable.dat";
   if (!QFile::exists(fileName)) {
     portable = false;
   }
 
   if (portable) {
     settings_ = new QSettings(
-          dataDirPath_ + QDir::separator() + QCoreApplication::applicationName() + ".ini",
+          appDirPath_ + QDir::separator() + "QuiteRSS.ini",
           QSettings::IniFormat);
   } else {
     settings_ = new QSettings(QSettings::IniFormat, QSettings::UserScope,
-                              QCoreApplication::organizationName(), QCoreApplication::applicationName());
+                              QCoreApplication::organizationName(), "QuiteRSS");
   }
+
+  qDebug() << "isPortable: " << portable;
+  qDebug() << "Settings file name: " << settings_->fileName();
 
   QNetworkProxy networkProxy;
   networkProxy.setType(static_cast<QNetworkProxy::ProxyType>(
@@ -97,6 +99,8 @@ MainWindow::MainWindow(QString appDirPath, QWidget *parent) :
   else {
     QNetworkProxy::setApplicationProxy(networkProxy);
   }
+
+  qDebug() << "Proxy type: " << settings_->value("networkProxy/type", QNetworkProxy::DefaultProxy).toInt();
 
   isProcessRunTimer_ = new QTimer(this);
   connect(isProcessRunTimer_, SIGNAL(timeout()),
@@ -116,6 +120,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::launchRequest()
 {
+  qDebug() << "Checking for updates...";
+
   findFiles(QDir(appDirPath_));
 
   reply_ = manager_.get(QNetworkRequest(QUrl("http://file.quite-rss.googlecode.com/hg/file_list.md5")));
@@ -157,7 +163,7 @@ void MainWindow::finishLoadFilesList()
       finishUpdate(tr("No new version available!"));
     }
   } else {
-    finishUpdate(tr("Error checking updates!"));
+    finishUpdate(tr("Error checking updates (not loaded md5)!"));
   }
 }
 
@@ -165,14 +171,17 @@ void MainWindow::finishLoadFilesList()
 void MainWindow::startLoadFile()
 {
   if (filesList_.count() > 1) {
-    QString fileStr(filesList_.takeFirst());
-    QString urlStr = "http://file.quite-rss.googlecode.com/hg/windows/" + fileStr + ".7z";
+    QString fileName(filesList_.takeFirst());
+    QString urlStr = "http://file.quite-rss.googlecode.com/hg/windows/" + fileName + ".7z";
 
     reply_ = manager_.get(QNetworkRequest(QUrl(urlStr)));
     connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFiles()));
     statusLabel_->setText(tr("Downloading files (%1/%2)...").
                           arg(filesListS_.count() - filesList_.count()).
                           arg(cntFiles_));
+    qDebug() << QString("Downloading files (%1/%2): %3").
+                arg(filesListS_.count() - filesList_.count()).
+                arg(cntFiles_).arg(fileName);
   } else {
     statusLabel_->setText(tr("Attention! QuiteRSS will close! \nContinue updating?"));
     progressBar_->hide();
@@ -212,7 +221,7 @@ void MainWindow::finishLoadFiles()
 
     startLoadFile();
   } else {
-    finishUpdate(tr("Error checking updates!"));
+    finishUpdate(tr("Error checking updates! Not loaded file: ") + reply_->url().toString());
   }
 }
 
@@ -317,6 +326,8 @@ void MainWindow::findFiles(const QDir& dir)
 
 void MainWindow::finishUpdate(QString str)
 {
+  qDebug() << str;
+
   statusLabel_->setText(str);
   progressBar_->hide();
 
@@ -344,7 +355,10 @@ void MainWindow::slotMoveWindows()
 
 void MainWindow::continueUpgrade()
 {
+  qDebug() << "Closing QuiteRSS...";
+
   statusLabel_->setText(tr("Closing QuiteRSS..."));
+
   applyButtonLayout_->setMargin(0);
   applyButton_->hide();
   cancelButton_->hide();
@@ -381,22 +395,27 @@ void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
     return;
   }
   if (filesListS_.count() > 1) {
-    QString file = filesListS_.takeFirst();
+    QString fileName(filesListS_.takeFirst());
     statusLabel_->setText(tr("Extract files (%1/%2)...").
                           arg(filesListT_.count() - filesListS_.count() + 1).
                           arg(cntFiles_));
+    qDebug() << QString("Extract files (%1/%2): %3").
+                arg(filesListT_.count() - filesListS_.count() + 1).
+                arg(cntFiles_).arg(fileName);
 
     QString program = "7za.exe";
     QStringList arguments;
     QString path = appDirPath_;
 
-    if (file.lastIndexOf("/") > 0)
-      path.append(QString("/%1").arg(file.left(file.lastIndexOf("/"))));
+    if (fileName.lastIndexOf("/") > 0)
+      path.append(QString("/%1").arg(fileName.left(fileName.lastIndexOf("/"))));
     arguments << "x" << "-r" << "-aoa"
               << filesListT_.at(filesListT_.count() - filesListS_.count())
               << QString("-o%1").arg(path);
     sevenzaProcess_->start(program, arguments);
   } else {
+    qDebug() << "Update completed!";
+
     statusLabel_->setText(tr("Update completed!"));
     progressBar_->hide();
 

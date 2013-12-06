@@ -25,7 +25,7 @@ LogFile::LogFile()
 void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
   QFile file;
-  file.setFileName(QCoreApplication::applicationDirPath() + "/debug.log");
+  file.setFileName(QCoreApplication::applicationDirPath() + "/updater.log");
   QIODevice::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
 
   if (file.exists() && (file.size() < maxLogFileSize)) {
@@ -66,7 +66,7 @@ void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QStri
 void LogFile::msgHandler(QtMsgType type, const char *msg)
 {
   QFile file;
-  file.setFileName(QCoreApplication::applicationDirPath() + "/debug.log");
+  file.setFileName(QCoreApplication::applicationDirPath() + "/updater.log");
   QIODevice::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
 
   if (file.exists() && (file.size() < maxLogFileSize)) {

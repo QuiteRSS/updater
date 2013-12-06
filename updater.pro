@@ -17,7 +17,6 @@ CONFIG(debug, debug|release) {
   BUILD_DIR = debug
 } else {
   BUILD_DIR = release
-  DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
 DESTDIR = $${BUILD_DIR}/target/

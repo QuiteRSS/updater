@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
   qInstallMsgHandler(LogFile::msgHandler);
 #endif
   qWarning() << "Start application!";
+  qDebug() << "isRunning: " << app.isRunning();
 
   QString message = app.arguments().value(1);
   if (app.isRunning()) {
@@ -45,10 +46,14 @@ int main(int argc, char *argv[])
     return 0;
   } else {
     QString appDirPath = QCoreApplication::applicationDirPath();
+    qDebug() << "Application dir path: " << appDirPath;
     if (!appDirPath.contains("QuiteRSSUpdater")) {
+      qDebug() << "Temp dir path: " << QDir::tempPath();
+
       QStringList fileDll;
       fileDll << "libgcc_s_dw2-1.dll" << "mingwm10.dll"<< "QtCore4.dll"
-              << "QtGui4.dll" << "QtNetwork4.dll" << "Updater.exe";
+              << "QtGui4.dll" << "QtNetwork4.dll" << "Updater.exe"
+              << "updater.log";
 
       QDir(QDir::tempPath()).mkdir("QuiteRSSUpdater");
       foreach (QString file, fileDll) {
