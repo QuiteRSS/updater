@@ -5,11 +5,13 @@ TEMPLATE = app
 
 SOURCES += \
     src/mainwindow.cpp \
-    src/main.cpp
+    src/main.cpp \
+    src/logfile.cpp
 
 HEADERS  += \
     src/version.h \
-    src/mainwindow.h
+    src/mainwindow.h \
+    src/logfile.h
 
 CONFIG(debug, debug|release) {
   BUILD_DIR = debug
