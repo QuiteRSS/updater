@@ -1,3 +1,20 @@
+/* =============================================================================
+* QuiteRSS is a open-source cross-platform RSS/Atom news feeds reader
+* Copyright (C) 2012-2013 QuiteRSS Team <quiterssteam@gmail.com>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* =========================================================================== */
 #include "mainwindow.h"
 
 /*! \brief Обработка сообщений полученных из запущщеной копии программы *******/
@@ -208,11 +225,12 @@ void MainWindow::isProcessRun()
   static int cnt = 0;
 
   HANDLE hSnap = NULL;
-  PROCESSENTRY32 pe32 = {sizeof(pe32)};
   QList <int> ids;
 
   hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (hSnap!=NULL) {
+    PROCESSENTRY32 pe32;
+    pe32.dwSize = sizeof(PROCESSENTRY32);
     if (Process32First(hSnap, &pe32)) {
       QString filename = copyToQString(pe32.szExeFile);
       if (filename == "QuiteRSS.exe")
@@ -226,10 +244,11 @@ void MainWindow::isProcessRun()
   }
   CloseHandle(hSnap);
 
-  MODULEENTRY32 mpe32 = {sizeof(mpe32)};
   foreach (int id, ids) {
     hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, id);
     if (hSnap!=NULL) {
+      MODULEENTRY32 mpe32;
+      mpe32.dwSize = sizeof(MODULEENTRY32);
       if (Module32First(hSnap, &mpe32)) {
         QFileInfo file(copyToQString(mpe32.szExePath));
         if (file.path() == appDirPath_) {
