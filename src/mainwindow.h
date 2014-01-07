@@ -1,6 +1,6 @@
 /* =============================================================================
 * QuiteRSS is a open-source cross-platform RSS/Atom news feeds reader
-* Copyright (C) 2012-2013 QuiteRSS Team <quiterssteam@gmail.com>
+* Copyright (C) 2012-2014 QuiteRSS Team <quiterssteam@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ private slots:
   void cancelUpgrade();
   void extractFiles();
   void finishExtract(int exitCode, QProcess::ExitStatus exitStatus);
-  void errorExtract(QProcess::ProcessError);
+  void errorExtract(QProcess::ProcessError error);
 
 signals:
   void signalMoveWindows();

@@ -1,6 +1,6 @@
 /* =============================================================================
 * QuiteRSS is a open-source cross-platform RSS/Atom news feeds reader
-* Copyright (C) 2012-2013 QuiteRSS Team <quiterssteam@gmail.com>
+* Copyright (C) 2012-2014 QuiteRSS Team <quiterssteam@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
   qDebug() << "isRunning: " << app.isRunning();
 
   QString message = app.arguments().value(1);
+  qDebug() << "message: " << message;
   if (app.isRunning()) {
     if (1 == argc) {
       app.sendMessage("--show");

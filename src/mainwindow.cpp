@@ -1,6 +1,6 @@
 /* =============================================================================
 * QuiteRSS is a open-source cross-platform RSS/Atom news feeds reader
-* Copyright (C) 2012-2013 QuiteRSS Team <quiterssteam@gmail.com>
+* Copyright (C) 2012-2014 QuiteRSS Team <quiterssteam@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -391,7 +391,7 @@ void MainWindow::extractFiles()
 void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
 {
   if (exitStatus == QProcess::CrashExit) {
-    finishUpdate(tr("Error extracting files!"));
+    finishUpdate(tr("Error extracting files (process crashed)!"));
     return;
   }
   if (filesListS_.count() > 1) {
@@ -429,7 +429,7 @@ void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
   }
 }
 
-void MainWindow::errorExtract(QProcess::ProcessError)
+void MainWindow::errorExtract(QProcess::ProcessError error)
 {
-  finishUpdate(tr("Error extracting files!"));
+  finishUpdate(tr("Error extracting files (%1)!").arg(error));
 }
