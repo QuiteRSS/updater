@@ -403,7 +403,7 @@ void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
                 arg(filesListT_.count() - filesListS_.count() + 1).
                 arg(cntFiles_).arg(fileName);
 
-    QString program = appDirPath_ % "/7za.exe";
+    QString program = "7za.exe";
     QStringList arguments;
     QString path = appDirPath_;
 
@@ -429,7 +429,7 @@ void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
   }
 }
 
-void MainWindow::errorExtract(QProcess::ProcessError error)
+void MainWindow::errorExtract(QProcess::ProcessError)
 {
-  finishUpdate(tr("Error extracting files (%1)!").arg(error));
+  finishUpdate(sevenzaProcess_->errorString());
 }
