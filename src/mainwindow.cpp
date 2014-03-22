@@ -403,7 +403,7 @@ void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
                 arg(filesListT_.count() - filesListS_.count() + 1).
                 arg(cntFiles_).arg(fileName);
 
-    QString program = "7za.exe";
+    QString program = appDirPath_ % "/7za.exe";
     QStringList arguments;
     QString path = appDirPath_;
 
