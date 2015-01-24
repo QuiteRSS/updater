@@ -33,6 +33,8 @@ public:
   explicit MainWindow(QString appDirPath, QWidget *parent = 0);
   ~MainWindow();
 
+  static QString dirPath();
+
 public slots:
   void receiveMessage(const QString&);
 
@@ -41,8 +43,7 @@ private:
   void finishUpdate(QString str);
   QString copyToQString(WCHAR array[MAX_PATH]);
 
-  QString appDirPath_;
-
+  static QString appDirPath_;
   QLabel *statusLabel_;
   QProgressBar *progressBar_;
   QTimer *progressTimer_;

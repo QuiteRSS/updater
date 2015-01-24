@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * =========================================================================== */
 #include "logfile.h"
+#include "mainwindow.h"
 
 LogFile::LogFile()
 {
@@ -25,7 +26,7 @@ LogFile::LogFile()
 void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
   QFile file;
-  file.setFileName(QCoreApplication::applicationDirPath() + "/updater.log");
+  file.setFileName(MainWindow::dirPath() + "/updater.log");
   QIODevice::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
 
   if (file.exists() && (file.size() < maxLogFileSize)) {
@@ -66,7 +67,7 @@ void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QStri
 void LogFile::msgHandler(QtMsgType type, const char *msg)
 {
   QFile file;
-  file.setFileName(QCoreApplication::applicationDirPath() + "/updater.log");
+  file.setFileName(MainWindow::dirPath() + "/updater.log");
   QIODevice::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
 
   if (file.exists() && (file.size() < maxLogFileSize)) {

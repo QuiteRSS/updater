@@ -17,6 +17,8 @@
 * =========================================================================== */
 #include "mainwindow.h"
 
+QString MainWindow::appDirPath_ = 0;
+
 /*! \brief Обработка сообщений полученных из запущщеной копии программы *******/
 void MainWindow::receiveMessage(const QString& message)
 {
@@ -37,9 +39,10 @@ void MainWindow::receiveMessage(const QString& message)
 }
 
 MainWindow::MainWindow(QString appDirPath, QWidget *parent) :
-  QWidget(parent),
-  appDirPath_(appDirPath)
+  QWidget(parent)
 {
+  appDirPath_ = appDirPath;
+
   setWindowTitle("QuiteRSS Updater");
   setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint |
                  Qt::WindowStaysOnTopHint | Qt::MSWindowsFixedSizeDialogHint |
@@ -116,6 +119,10 @@ MainWindow::MainWindow(QString appDirPath, QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+}
+
+QString MainWindow::dirPath() {
+  return appDirPath_;
 }
 
 void MainWindow::launchRequest()
