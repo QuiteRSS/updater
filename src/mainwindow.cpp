@@ -124,7 +124,7 @@ void MainWindow::launchRequest()
 
   findFiles(QDir(appDirPath_));
 
-  reply_ = manager_.get(QNetworkRequest(QUrl("http://file.quite-rss.googlecode.com/hg/file_list.md5")));
+  reply_ = manager_.get(QNetworkRequest(QUrl("http://quiterss.org/files/updates/file_list.md5")));
   connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFilesList()));
 }
 
@@ -172,7 +172,7 @@ void MainWindow::startLoadFile()
 {
   if (filesList_.count() > 1) {
     QString fileName(filesList_.takeFirst());
-    QString urlStr = "http://file.quite-rss.googlecode.com/hg/windows/" + fileName + ".7z";
+    QString urlStr = "http://quiterss.org/files/updates/windows/" + fileName + ".7z";
 
     reply_ = manager_.get(QNetworkRequest(QUrl(urlStr)));
     connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFiles()));
