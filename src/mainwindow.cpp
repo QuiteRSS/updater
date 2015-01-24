@@ -122,6 +122,9 @@ MainWindow::~MainWindow()
 }
 
 QString MainWindow::dirPath() {
+  if (appDirPath_.isEmpty())
+    return QCoreApplication::applicationDirPath();
+
   return appDirPath_;
 }
 
