@@ -1,5 +1,5 @@
-#define FILEVER        0,2,3,0
+#define FILEVER        0,2,4,0
 #define PRODUCTVER     FILEVER
-#define STRFILEVER     "0.2.3.0\0"
+#define STRFILEVER     "0.2.4.0\0"
 #define STRPRODUCTVER  STRFILEVER
-#define STRDATE        "22.03.2014\0"
+#define STRDATE        "25.01.2015\0"
