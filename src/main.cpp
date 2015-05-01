@@ -52,9 +52,9 @@ int main(int argc, char *argv[])
       qDebug() << "Temp dir path: " << QDir::tempPath();
 
       QStringList fileDll;
-      fileDll << "libgcc_s_dw2-1.dll" << "mingwm10.dll"<< "QtCore4.dll"
-              << "QtGui4.dll" << "QtNetwork4.dll" << "Updater.exe"
-              << "7za.exe";
+      fileDll << "libgcc_s_dw2-1.dll" << "libwinpthread-1.dll" << "libstdc++-6.dll"
+              << "QtCore4.dll" << "QtGui4.dll" << "QtNetwork4.dll"
+              << "Updater.exe" << "7za.exe";
 
       QDir(QDir::tempPath()).mkdir("QuiteRSSUpdater");
       foreach (QString file, fileDll) {
