@@ -28,7 +28,7 @@ BEGIN
             VALUE "CompanyName", "QuiteRSS Team\0"
             VALUE "Comments", "Application\0"
             VALUE "FileDescription", "Updater QuiteRSS\0"
-            VALUE "FileVersion", STRFILEVER
+            VALUE "FileVersion", STRFILEVER_FULL
             VALUE "InternalName", "Updater\0"
             VALUE "OriginalFilename", "Updater.exe\0"
             VALUE "LegalCopyright", "Copyright © 2012-2015 QuiteRSS Team\0"

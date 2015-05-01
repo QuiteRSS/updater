@@ -1,3 +1,22 @@
+# VCS revision info
+REVFILE = src/version_rev.h
+QMAKE_DISTCLEAN += $$REVFILE
+exists(.git) {
+  VERSION_REV = $$system(git rev-list master --count)
+  count(VERSION_REV, 1) {
+    # FIXME
+    VERSION_REV = $$VERSION_REV
+  } else {
+    VERSION_REV = 0
+  }
+  !build_pass:message(VCS revision: $$VERSION_REV)
+  system(echo $${LITERAL_HASH}define VCS_REVISION $$VERSION_REV > $$REVFILE)
+} else:!exists($$REVFILE) {
+  VERSION_REV = 0
+  !build_pass:message(VCS revision: $$VERSION_REV)
+  system(echo $${LITERAL_HASH}define VCS_REVISION $$VERSION_REV > $$REVFILE)
+}
+
 QT       += core gui
 
 TARGET = Updater
@@ -10,8 +29,11 @@ SOURCES += \
 
 HEADERS  += \
     src/version.h \
+    src/version_rev.h \
     src/mainwindow.h \
     src/logfile.h
+
+INCLUDEPATH +=  $$PWD/src \
 
 CONFIG(debug, debug|release) {
   BUILD_DIR = debug
