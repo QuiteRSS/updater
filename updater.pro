@@ -33,3 +33,6 @@ RESOURCES += \
     updater.qrc
 
 RC_FILE = updaterapp.rc
+
+DISTFILES += \
+    README.md
