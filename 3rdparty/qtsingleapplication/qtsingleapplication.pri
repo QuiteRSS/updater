@@ -1,6 +1,7 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 QT *= network
+greaterThan(QT_MAJOR_VERSION, 4): QT *= widgets
 
 qtsingleapplication-uselib:!qtsingleapplication-buildlib {
     LIBS += -L$$QTSINGLEAPPLICATION_LIBDIR -l$$QTSINGLEAPPLICATION_LIBNAME
@@ -9,7 +10,7 @@ qtsingleapplication-uselib:!qtsingleapplication-buildlib {
     HEADERS += $$PWD/qtsingleapplication.h $$PWD/qtlocalpeer.h
 }
 
-win32 {
+os2|win32 {
     contains(TEMPLATE, lib):contains(CONFIG, shared):DEFINES += QT_QTSINGLEAPPLICATION_EXPORT
     else:qtsingleapplication-uselib:DEFINES += QT_QTSINGLEAPPLICATION_IMPORT
 }
