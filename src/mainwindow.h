@@ -18,7 +18,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#ifdef HAVE_QT5
+#include <QtWidgets>
+#else
 #include <QtGui>
+#endif
 #include <QNetworkProxy>
 #include <QNetworkReply>
 #include <windows.h>
