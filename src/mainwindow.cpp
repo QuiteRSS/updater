@@ -144,11 +144,21 @@ void MainWindow::finishLoadFilesList()
   if (reply_->error() == QNetworkReply::NoError) {
     QStringList listS(QString(QLatin1String(reply_->readAll())).split('\n'));
 
+    filesListR_.clear();
+    foreach (QString fileStr, filesList_) {
+      QFileInfo fi(fileStr);
+      if (fi.suffix() == "dll")
+        filesListR_ << fileStr;
+    }
+
     foreach (QString str, listS) {
       str = str.simplified();
 
       QString fileStr = str.right(str.length() - str.indexOf(" *") - 2).replace("\\", "/");
       QString md5Str = str.left(str.indexOf(" *"));
+
+      if (filesListR_.contains(fileStr, Qt::CaseInsensitive))
+        filesListR_.removeOne(fileStr);
 
       bool ok = false;
       for (int i = 0; i < filesList_.count(); i++) {
@@ -424,6 +434,10 @@ void MainWindow::finishExtract(int, QProcess::ExitStatus exitStatus)
               << QString("-o%1").arg(path);
     sevenzaProcess_->start(program, arguments);
   } else {
+    foreach (QString file, filesListR_) {
+      QFile::remove(file);
+    }
+
     qDebug() << "Update completed!";
 
     statusLabel_->setText(tr("Update completed!"));

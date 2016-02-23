@@ -63,6 +63,7 @@ private:
   QStringList filesListT_;
   QStringList filesListS_;
   QStringList md5ListS_;
+  QStringList filesListR_;
   int cntFiles_;
 
   QNetworkAccessManager manager_;
