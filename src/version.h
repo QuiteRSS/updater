@@ -1,9 +1,9 @@
 #include "version_rev.h"
 
-#define STRDATE           "23.02.2016\0"
-#define STRPRODUCTVER     "0.4.2\0"
+#define STRDATE           "26.02.2016\0"
+#define STRPRODUCTVER     "0.4.3\0"
 
-#define VERSION           0,4,2
+#define VERSION           0,4,3
 #define PRODUCTVER        VERSION,0
 #define FILEVER           VERSION,VCS_REVISION
 
