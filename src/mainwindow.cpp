@@ -134,7 +134,11 @@ void MainWindow::launchRequest()
 
   findFiles(QDir(appDirPath_));
 
+#ifdef HAVE_QT5
   reply_ = manager_.get(QNetworkRequest(QUrl("http://quiterss.org/files/updates_new/file_list.md5")));
+#else
+  reply_ = manager_.get(QNetworkRequest(QUrl("http://quiterss.org/files/updates/file_list.md5")));
+#endif
   connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFilesList()));
 }
 
@@ -192,7 +196,12 @@ void MainWindow::startLoadFile()
 {
   if (filesList_.count() > 1) {
     QString fileName(filesList_.takeFirst());
-    QString urlStr = "http://quiterss.org/files/updates_new/windows/" + fileName + ".7z";
+
+#ifdef HAVE_QT5
+  QString urlStr = "http://quiterss.org/files/updates_new/windows/" + fileName + ".7z";
+#else
+  QString urlStr = "http://quiterss.org/files/updates/windows/" + fileName + ".7z";
+#endif
 
     reply_ = manager_.get(QNetworkRequest(QUrl(urlStr)));
     connect(reply_, SIGNAL(finished()), this, SLOT(finishLoadFiles()));

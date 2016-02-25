@@ -52,14 +52,22 @@ int main(int argc, char *argv[])
       qDebug() << "Temp dir path: " << QDir::tempPath();
 
       QStringList fileDll;
+#ifdef HAVE_QT5
       fileDll << "icudt53.dll" << "icuin53.dll" << "icuuc53.dll"
               << "libgcc_s_dw2-1.dll" << "libstdc++-6.dll" << "libwinpthread-1.dll"
               << "Qt5Core.dll" << "Qt5Gui.dll" << "Qt5Widgets.dll"
               << "Qt5Network.dll" << "Updater.exe" << "7za.exe"
               << "platforms/qwindows.dll";
+#else
+      fileDll << "libgcc_s_dw2-1.dll" << "mingwm10.dll"<< "QtCore4.dll"
+              << "QtGui4.dll" << "QtNetwork4.dll" << "Updater.exe"
+              << "7za.exe";
+#endif
 
       QDir(QDir::tempPath()).mkdir("QuiteRSSUpdater");
+#ifdef HAVE_QT5
       QDir(QDir::tempPath()).mkdir("QuiteRSSUpdater/platforms");
+#endif
       foreach (QString file, fileDll) {
         QFile::remove(QDir::tempPath() + "/QuiteRSSUpdater/" + file);
         bool okCopy = QFile::copy(appDirPath + "/" + file,
