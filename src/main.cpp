@@ -53,8 +53,11 @@ int main(int argc, char *argv[])
 
       QStringList fileDll;
 #ifdef HAVE_QT5
-      fileDll << "icudt53.dll" << "icuin53.dll" << "icuuc53.dll"
+      fileDll
+  #if defined(__MINGW32__)
+              << "icudt53.dll" << "icuin53.dll" << "icuuc53.dll"
               << "libgcc_s_dw2-1.dll" << "libstdc++-6.dll" << "libwinpthread-1.dll"
+  #endif
               << "Qt5Core.dll" << "Qt5Gui.dll" << "Qt5Widgets.dll"
               << "Qt5Network.dll" << "Updater.exe" << "7za.exe"
               << "platforms/qwindows.dll";
