@@ -25,9 +25,11 @@
 #endif
 #include <QNetworkProxy>
 #include <QNetworkReply>
-#include <windows.h>
+#include <Windows.h>
+#if defined(__MINGW32__)
 #include <w32api.h>
-#include <tlhelp32.h>
+#endif
+#include <TlHelp32.h>
 
 class MainWindow : public QWidget
 {
