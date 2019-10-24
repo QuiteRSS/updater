@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
   #endif
               << "Qt5Core.dll" << "Qt5Gui.dll" << "Qt5Widgets.dll"
               << "Qt5Network.dll" << "Updater.exe" << "7za.exe"
-              << "platforms/qwindows.dll";
+              << "platforms/qwindows.dll" << "styles/qwindowsvistastyle.dll";
 #else
       fileDll << "libgcc_s_dw2-1.dll" << "mingwm10.dll"<< "QtCore4.dll"
               << "QtGui4.dll" << "QtNetwork4.dll" << "Updater.exe"
@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
       QDir(QDir::tempPath()).mkdir("QuiteRSSUpdater");
 #ifdef HAVE_QT5
       QDir(QDir::tempPath()).mkdir("QuiteRSSUpdater/platforms");
+      QDir(QDir::tempPath()).mkdir("QuiteRSSUpdater/styles");
 #endif
       foreach (QString file, fileDll) {
         QFile::remove(QDir::tempPath() + "/QuiteRSSUpdater/" + file);
