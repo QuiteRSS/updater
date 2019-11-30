@@ -42,6 +42,9 @@ CONFIG(debug, debug|release) {
   BUILD_DIR = release
 }
 
+CONFIG += embed_manifest_exe
+QMAKE_LFLAGS_WINDOWS += /MANIFESTUAC:"level='requireAdministrator'"
+
 DESTDIR = $${BUILD_DIR}/target/
 OBJECTS_DIR = $${BUILD_DIR}/obj/
 MOC_DIR = $${BUILD_DIR}/moc/
