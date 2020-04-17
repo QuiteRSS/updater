@@ -55,7 +55,11 @@ int main(int argc, char *argv[])
 #ifdef HAVE_QT5
       fileDll
   #if defined(__MINGW32__)
+  #if QT_VERSION >= 0x050E00
+              << "icudt65.dll" << "icuin65.dll" << "icuuc65.dll"
+  #else
               << "icudt53.dll" << "icuin53.dll" << "icuuc53.dll"
+  #endif
               << "libgcc_s_dw2-1.dll" << "libstdc++-6.dll" << "libwinpthread-1.dll"
   #endif
               << "Qt5Core.dll" << "Qt5Gui.dll" << "Qt5Widgets.dll"
