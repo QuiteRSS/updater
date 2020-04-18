@@ -63,4 +63,5 @@ RESOURCES += \
 RC_FILE = updaterapp.rc
 
 DISTFILES += \
-    README.md
+    README.md \
+    updaterapp.rc
